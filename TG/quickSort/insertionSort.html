@@ -1,0 +1,119 @@
+ <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Insertion Sort</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+
+	  <!-- Módulo WebAssembly -->
+    <script src="insertionSortWasm.js"></script>
+    <script type="text/javascript">	
+
+    	window.onload = function(){
+
+				const grafico =
+			  new Chart(document.getElementById('myChart').getContext('2d'), {
+				    type: 'bar',
+				    data: {
+			        labels: ['JavaScript', 'WebeAssembly C/C++'],
+			        datasets: [{
+		            label: 'Execução em Milissegundo(s)',
+		            data: [0, 0],
+		            backgroundColor: [
+		                'rgba(255, 99, 132, 0.2)',
+		                'rgba(54, 162, 235, 0.2)'
+		            ],
+		            borderColor: [
+		                'rgba(255, 99, 132, 1)',
+		                'rgba(54, 162, 235, 1)'
+		            ],
+		            borderWidth: 1.5
+			        }]
+				    },
+				    options: { scales: { yAxes: [{ ticks: { beginAtZero: true } }], 
+				                         xAxes: [{ barPercentage: 0.2}] } }
+				});
+
+
+
+	       Module().then(module => {
+	
+
+						function jsInsertionSort(arr, n)  {  
+						  var i, key, j;  
+						  
+						  for (i = 1; i < n; i++) {  
+						    key = arr[i];  
+						    j = i - 1;  
+
+						    while (j >= 0 && arr[j] > key) {  
+						      arr[j + 1] = arr[j];  
+						      j = j - 1;  
+						    }  
+						    arr[j + 1] = key;  
+						  } 
+						  return arr; 
+						}  
+
+            // Função que faz alocação de memória para o módulo WebAssembly
+					  function wsInsertionSort(array, n) {
+					    const ponteiro = module._malloc(array.length * 4);
+					    const posicao  = ponteiro / 4;
+					    module.HEAP32.set(array, posicao);
+					    cppInsertionSort(ponteiro, n);
+					    module._free(ponteiro);
+					  }
+
+
+
+
+
+
+
+
+
+
+            // Recupera a função C/C++ do módulo WebAssembly
+					  cppInsertionSort = module.cwrap('cppInsertionSort', 
+					  	                              'number',
+					  	                              ['number', 'number']);
+
+            // Vetores que serão ordenados  
+	          const jsArray  = new Int32Array(100000);
+	          const cppArray = new Int32Array(100000);
+
+	          // Preenchendo vetor com números aleatórios
+				    for (var i = 0, il = jsArray.length; i < il; i++) {
+				    	const valorAleatorio = ((Math.random() * 999999999) | 0);
+				      jsArray[i]  = valorAleatorio;
+				      cppArray[i] = valorAleatorio;
+				    }
+
+            // Execução da função c/c++ WebAssembly
+					  var startTime  = performance.now();
+            wsInsertionSort(cppArray, cppArray.length);
+            const cppResult = (performance.now() - startTime).toFixed(4);
+
+            // Execução da função JavaScript
+					  var startTime  = performance.now();
+            jsInsertionSort(jsArray, jsArray.length);
+            const jsResult = (performance.now() - startTime).toFixed(4);
+
+            console.log(`Tempo de Execução\nJavaScript: ${jsResult},\nWebAssembly C/C++: ${cppResult}`);
+
+	          grafico.data.datasets[0].data[0] = jsResult;
+	          grafico.data.datasets[0].data[1] = cppResult;
+	          grafico.update();
+	       });
+    	}
+
+
+    </script>
+    <h3 style="font-family: Tahoma, Geneva, sans-serif;">Ordenação por Inserção #02<h3>
+    <canvas id="myChart" style="height:40vh; width:60vw;"></canvas>
+</body>
+</html>

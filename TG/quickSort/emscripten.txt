@@ -1,0 +1,4 @@
+// PARA C++ (cpp)
+
+
+emcc insertionSort.cpp -O2 -s WASM=1 -s MODULARIZE=1 -s DEMANGLE_SUPPORT=1 -s ALLOW_MEMORY_GROWTH=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['cwrap']" -o insertionSortWasm.js

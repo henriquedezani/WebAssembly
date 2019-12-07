@@ -1,0 +1,3 @@
+// PARA C++ (cpp)
+emcc fib.cpp -Os -s WASM=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['cwrap']" -s MODULARIZE=1 -s EXPORT_NAME="Fibonacci" -o fibWasm.js
+

@@ -1,0 +1,87 @@
+ <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Fibonacci</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+   
+	  <!-- Módulo WebAssembly -->
+    <script src="fibWasm.js"></script>
+    <script type="text/javascript">	
+
+      // Função JavaScript de Fibonacci
+		  function jsFib(n) {
+		    if (n === 1) return 1;
+		    if (n === 2) return 1;
+		    return jsFib(n-1) + jsFib(n-2);
+		  }
+
+	 
+	    function run(func, n, loop) {	      
+	      var startTime = performance.now();
+
+	      for (var i = 0; i < loop; i++) 
+	        func(n);
+	      
+	      var endTime = performance.now();
+	      return ((endTime - startTime) / loop).toFixed(4);
+	    }
+
+
+		  window.onload = function(){
+				const grafico =
+			  new Chart(document.getElementById('myChart').getContext('2d'), {
+				    type: 'bar',
+				    data: {
+			        labels: ['JavaScript', 'WebeAssembly C/C++'],
+			        datasets: [{
+		            label: 'Execução em Milissegundo(s)',
+		            data: [0, 0],
+		            backgroundColor: [
+		                'rgba(255, 99, 132, 0.2)',
+		                'rgba(54, 162, 235, 0.2)'
+		            ],
+		            borderColor: [
+		                'rgba(255, 99, 132, 1)',
+		                'rgba(54, 162, 235, 1)'
+		            ],
+		            borderWidth: 1.5
+			        }]
+				    },
+				    options: { scales: { yAxes: [{ ticks: { beginAtZero: true } }], 
+				                         xAxes: [{ barPercentage: 0.2}] } }
+				});
+
+
+        Fibonacci().then( Module => {
+        	// Função importada do C/C++ de Fibonacci
+        	const cppFib   = Module.cwrap('fib', 'number', ['number']);
+        	const sequence = 45;
+
+          // Execução da função C/C++ WebAssembly
+				  var startTime   = performance.now();
+          cppFib(sequence);
+          const cppResult = (performance.now() - startTime).toFixed(4);
+
+          // Execução da função JavaScript
+				  var startTime  = performance.now();
+          jsFib(sequence);
+          const jsResult = (performance.now() - startTime).toFixed(4);
+
+          console.log(`Tempo de Execução\nJavaScript: ${jsResult},\nWebAssembly C/C++: ${cppResult}`);
+
+       
+          grafico.data.datasets[0].data[0] = jsResult;
+          grafico.data.datasets[0].data[1] = cppResult;
+          grafico.update();
+        });
+      }
+    </script>
+    <h3 style="font-family: Tahoma, Geneva, sans-serif;">Sequência de Fibonacci #01<h3>
+    <canvas id="myChart" style="height:40vh; width:60vw;"></canvas>
+</body>
+</html>

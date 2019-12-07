@@ -1,0 +1,1 @@
+emcc main.c -o wasmpico.js -O3 -s EXPORTED_FUNCTIONS="['_find_faces', '_cluster_detections', '_malloc', '_free']" -s WASM=1

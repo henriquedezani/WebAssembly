@@ -1,0 +1,33 @@
+IMPLEMENTAÇÃO DO ALGORITMO PICO PARA JAVASCRIPT E WASM 
+https://github.com/tehnokv/picojs
+
+
+
+ALGORITMO Pixel Intensity Comparison-based Object detection (pico)
+https://github.com/nenadmarkus/pico
+
+
+
+ARITGO DO PROFESSOR Nenad Markuš
+https://arxiv.org/abs/1305.4537
+
+
+
+
+EMSCRIPTEN SDK
+emcc teste.c -o wasmpico.js -O3 -s EXPORTED_FUNCTIONS="['_find_faces', '_cluster_detections', '_malloc', '_free']" -s WASM=1
+
+
+
+
+
+
+# OUTROS ALGORITMOS IMPLEMENTADOS 
+https://sod.pixlab.io/articles/realtime-face-detection-webassembly.html
+https://github.com/noahlevenson/wasmface
+https://codepen.io/huningxin/pen/ZJyOBW
+https://hacks.mozilla.org/2017/09/bootcamps-webassembly-and-computer-vision/
+
+
+
+
